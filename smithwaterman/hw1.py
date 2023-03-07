@@ -8,6 +8,7 @@ __version__ = "1.0.0"
 ### Usage: python hw1.py -i <input file> -s <score file>
 ### Example: python hw1.py -i input.txt -s blosum62.txt
 ### Note: Smith-Waterman Algorithm
+### Please see https://github.com/ianneidel/affine-smith-waterman for the extra credit pip-installable package/repository.
 
 DIAGONAL = 0
 ABOVE = 1
