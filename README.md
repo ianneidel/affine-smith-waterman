@@ -20,7 +20,7 @@ As such, an example run would use the following command
 
 `-o`: the penalty incurred by opening a new gap; defaults to -2
 
-`-o`: the penalty incurred by extending an existing gap; defaults to -1
+`-e`: the penalty incurred by extending an existing gap; defaults to -1
 
 
 ## Output:
