@@ -202,7 +202,7 @@ def setMaxScore(i,j,scoreMatrix,s1,s2,similarityDict,openGap,extGap):
     scoreMatrix[i,j,0] = max(diag,above,left,0)
     scoreMatrix[i,j,1] = findBestMove(diag,above,vertjump,left,horizjump)
         
-def runSW(inputFile, scoreFile, openGap, extGap):
+def runSW(inputFile, scoreFile, openGap=-2, extGap=-1):
     """
     For two given input sequences (path given by inputFile), a similarity matrix between each character (path given by scoreFile), and gap penalties (openGap, extGap),
     calculates and prints out details including the optimal local alignment, best score, and score matrix.
