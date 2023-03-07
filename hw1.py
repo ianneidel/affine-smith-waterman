@@ -25,12 +25,18 @@ parser.add_argument('-e', '--extgap', help='extension gap', required=False, defa
 args = parser.parse_args()
 
 def extractSequences(inputFile):
+    """
+    Reads in two new line delimited input sequences from a file, where inputFile is the path.
+    """
     with open(inputFile, "r") as f:
         input = f.read()
         splitInput = input.split("\n")
         return splitInput[0],splitInput[1]
     
 def addHeaders(scoreMatrix, s1, s2):
+    """
+    Add the sequences' characters to the score matrix as row and column names
+    """
     newScoreMatrix = np.empty((scoreMatrix.shape[0]+1,scoreMatrix.shape[1]+1,2),dtype=object)
     newScoreMatrix[1:,1:] = scoreMatrix.astype(str)
     newScoreMatrix[2:,0,0] = [str(el) for el in s1]
@@ -38,6 +44,13 @@ def addHeaders(scoreMatrix, s1, s2):
     return newScoreMatrix
 
 def traceback(s1,s2,scoreMatrix):
+    """
+    Determine the top scoring sequence in the score Matrix by finding the highest scoring cell and following the moves up the sequence until a 0 is hit.
+    Outputs
+    - 2 aligned sequences, with parenthesis indicating the location of the optimum local alignment and dashes indicating gaps
+    - a string of '|' characters indicating where there are character matches in said alignment
+    - the score of the optimal local alignment
+    """
     justScores = scoreMatrix[:,:,0]
     besti,bestj = np.unravel_index(justScores.argmax(), justScores.shape)
     bestScore = justScores[besti,bestj]
@@ -87,6 +100,10 @@ def traceback(s1,s2,scoreMatrix):
     return s1align, alignLines, s2align, bestScore
 
 def explainMove(tracer):
+    """
+    Given the move "tracer," outputs a string explaining the move.
+    Provided for debugging/informational purposes.
+    """
     if tracer == None:
         return "-"
     move = int(tracer) % 3
@@ -100,6 +117,10 @@ def explainMove(tracer):
     return f"{movetxt}{str(distance)}"
 
 def printScoreMatrix(s1,s2,scoreMatrix):
+    """
+    Given the score matrix and sequences, prints out the working alignment table with scores and explained moves.
+    Provided for debugging/informational purposes.
+    """
     headerScoreMatrix = addHeaders(scoreMatrix, s1, s2)
     for row in headerScoreMatrix.transpose((1,0,2)):
         rowVals = [f"{el[0],explainMove(el[1])}" if el[0] is not None else "" for el in row]
@@ -107,6 +128,9 @@ def printScoreMatrix(s1,s2,scoreMatrix):
         print(tabbedRow+"\t")
 
 def printAlgOutput(s1,s2,scoreMatrix):
+    """
+    Given the score matrix and sequences, prints out the input sequences, the matrix of scores, and the optimal local alignment+highest score, in a specific format.
+    """
     print("-----------\n|Sequences|\n-----------")
     print(f"sequence1\n{s1}")
     print(f"sequence2\n{s2}")
@@ -122,9 +146,17 @@ def printAlgOutput(s1,s2,scoreMatrix):
     print(f"Alignment Results:\n{s1align}\n{alignLines}\n{s2align}")
 
 def getScore(i,j,scoreMatrix):
+    """
+    Returns the score in a cell of the score matrix.
+    """
     return scoreMatrix[i,j,0]
 
 def findBestMove(diag,above,vertjump,left,horizjump):
+    """
+    Determines what an optimal move for the current cell is based on the scores given.
+    Encodes the move in a single int "tracer," i.e., the move distance*3 + the move type.
+    The move type can then be decoded by taking the mod of the tracer and the distance through the floordiv by 3 of the tracer.
+    """
     if diag == max(diag,above,left):
         return DIAGONAL
     elif above == max(diag,above,left):
@@ -133,6 +165,9 @@ def findBestMove(diag,above,vertjump,left,horizjump):
         return LEFT+3*horizjump
 
 def genVertScore(scoreMatrix,i,j,openGap,extGap):
+    """
+    Determines the optimal vertical move for a given cell. Outputs the score and the gap distance.
+    """
     max, jumpsize = -np.inf, 0
     k = 1
     while i-k >= 0:
@@ -143,6 +178,9 @@ def genVertScore(scoreMatrix,i,j,openGap,extGap):
     return max, jumpsize
 
 def genHorizScore(scoreMatrix,i,j,openGap,extGap):
+    """
+    Determines the optimal horizontal move for a given cell. Outputs the score and the gap distance.
+    """
     max, jumpsize = -np.inf, 0
     k = 1
     while j-k >= 0:
@@ -153,23 +191,29 @@ def genHorizScore(scoreMatrix,i,j,openGap,extGap):
     return max, jumpsize
 
 def setMaxScore(i,j,scoreMatrix,s1,s2,similarityDict,openGap,extGap):
+    """
+    Determines and records the optimal score and move that producees it for a given cell.
+    """
     matchScore = similarityDict[s1[i-1]][s2[j-1]]
     diag = getScore(i-1,j-1,scoreMatrix)+matchScore
     above, vertjump = genVertScore(scoreMatrix,i,j,openGap,extGap)
     left, horizjump = genHorizScore(scoreMatrix,i,j,openGap,extGap)
     
-    # set score for cell
     scoreMatrix[i,j,0] = max(diag,above,left,0)
     scoreMatrix[i,j,1] = findBestMove(diag,above,vertjump,left,horizjump)
         
-
-### Implement your Smith-Waterman Algorithm
 def runSW(inputFile, scoreFile, openGap, extGap):
+    """
+    For two given input sequences (path given by inputFile), a similarity matrix between each character (path given by scoreFile), and gap penalties (openGap, extGap),
+    calculates and prints out details including the optimal local alignment, best score, and score matrix.
+    """
     s1,s2 = extractSequences(inputFile)
     similarityDict = pd.read_csv(scoreFile, delim_whitespace=True).to_dict()
 
     n,m = len(s1)+1,len(s2)+1
     scoreMatrix = np.zeros((n,m,2),dtype=np.int64)
+    # The score matrix provides the optimal local alignment score up to the ith character of s1 and the jth character of s2 in its (i+1,j+1,0) cell.
+    # The move required to get to this point is stored in the (i+1,j+1,1) cell of the score matrix.
     
     for i in range(1,n):
         for j in range(1,m):
@@ -178,6 +222,5 @@ def runSW(inputFile, scoreFile, openGap, extGap):
     printAlgOutput(s1,s2,scoreMatrix)
     # printScoreMatrix(s1,s2,scoreMatrix)
     
-
 ### Run your Smith-Waterman Algorithm
 runSW(args.input, args.score, args.opengap, args.extgap)
