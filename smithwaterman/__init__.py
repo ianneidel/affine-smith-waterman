@@ -1,1 +1,1 @@
-import hw1
+__all__ = ['runSW']
