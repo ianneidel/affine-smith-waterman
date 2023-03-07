@@ -44,12 +44,16 @@ def traceback(s1,s2,scoreMatrix):
     - a string of '|' characters indicating where there are character matches in said alignment
     - the score of the optimal local alignment
     """
+
+    #determining the highest scoring cell
     justScores = scoreMatrix[:,:,0]
     besti,bestj = np.unravel_index(justScores.argmax(), justScores.shape)
     bestScore = justScores[besti,bestj]
     if bestScore == 0:
         return "","","",0
     i,j = besti,bestj
+
+    # generating the end (unaligned part) of the sequences
     s1endlen = len(s1[i:])
     s2endlen = len(s2[j:])
     s1align = ")" + " " * max(s2endlen-s1endlen,0)
@@ -59,6 +63,8 @@ def traceback(s1,s2,scoreMatrix):
     s2align = ")" + " " * max(s1endlen-s2endlen,0)
     if j < len(s2):
         s2align = s2align+s2[j:]
+
+    # adding the aligned part of the sequences, using the move tracer recorded in the score matrix
     while True:
         if justScores[i,j] == 0:
             break
@@ -84,6 +90,7 @@ def traceback(s1,s2,scoreMatrix):
             s2align = "-"*distance + s2align
             i-=distance
     
+    # adding the start (unaligned part) of the sequences
     s1start = s1[:i]
     s2start = s2[:j]
     s1align = " " * max(len(s2start)-len(s1start),0) + s1start + "(" + s1align
