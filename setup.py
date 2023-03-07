@@ -1,10 +1,3 @@
-#!/usr/bin/python
-__author__ = "Ian Neidel"
-__email__ = "ian.neidel@yale.edu"
-__copyright__ = "Copyright 2021"
-__license__ = "GPL"
-__version__ = "1.0.0"
-
 import setuptools
 
 with open("README.md", "r", encoding="utf-8") as fh:
