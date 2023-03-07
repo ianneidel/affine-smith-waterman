@@ -1,1 +1,1 @@
-from hw1 import runSW
+import hw1
