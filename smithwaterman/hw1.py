@@ -225,4 +225,4 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--extgap', help='extension gap', required=False, default=-1)
     args = parser.parse_args()
 
-    runSW(args.input, args.score, args.opengap, args.extgap)
+    runSW(args.input, args.score, openGap=args.opengap, extGap=args.extgap)
