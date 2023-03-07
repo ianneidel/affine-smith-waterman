@@ -17,13 +17,6 @@ import argparse
 import pandas as pd
 import numpy as np
 
-parser = argparse.ArgumentParser(description='Smith-Waterman Algorithm')
-parser.add_argument('-i', '--input', help='input file', required=True)
-parser.add_argument('-s', '--score', help='score file', required=True)
-parser.add_argument('-o', '--opengap', help='open gap', required=False, default=-2)
-parser.add_argument('-e', '--extgap', help='extension gap', required=False, default=-1)
-args = parser.parse_args()
-
 def extractSequences(inputFile):
     """
     Reads in two new line delimited input sequences from a file, where inputFile is the path.
@@ -224,4 +217,12 @@ def runSW(inputFile, scoreFile, openGap=-2, extGap=-1):
     
 ### Run your Smith-Waterman Algorithm
 if __name__ == "__main__":
+    #parse args if run as a script rather than from a module
+    parser = argparse.ArgumentParser(description='Smith-Waterman Algorithm')
+    parser.add_argument('-i', '--input', help='input file', required=True)
+    parser.add_argument('-s', '--score', help='score file', required=True)
+    parser.add_argument('-o', '--opengap', help='open gap', required=False, default=-2)
+    parser.add_argument('-e', '--extgap', help='extension gap', required=False, default=-1)
+    args = parser.parse_args()
+
     runSW(args.input, args.score, args.opengap, args.extgap)
