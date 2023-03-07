@@ -223,4 +223,5 @@ def runSW(inputFile, scoreFile, openGap=-2, extGap=-1):
     # printScoreMatrix(s1,s2,scoreMatrix)
     
 ### Run your Smith-Waterman Algorithm
-runSW(args.input, args.score, args.opengap, args.extgap)
+if __name__ == "__main__":
+    runSW(args.input, args.score, args.opengap, args.extgap)
