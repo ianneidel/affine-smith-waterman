@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='affine-smith-waterman',
+    name='smithwaterman',
     version='1.0',
     author='Ian Neidel',
     author_email='ian.neidel@yale.edu',
@@ -16,6 +16,6 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/ianneidel/affine-smith-waterman/issues"
     },
     license='GPL',
-    packages=['affine-smith-waterman'],
+    packages=['smithwaterman'],
     install_requires=['numpy','pandas','argparse'],
 )
