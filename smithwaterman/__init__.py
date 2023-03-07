@@ -1,1 +1,1 @@
-__all__ = ['runSW']
+from .hw1 import runSW
