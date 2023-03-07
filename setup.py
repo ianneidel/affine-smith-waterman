@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='smithwaterman',
-    version='1.0',
+    version='1.1',
     author='Ian Neidel',
     author_email='ian.neidel@yale.edu',
     description='An implementation of the Smith-Waterman algorithm, supporting an affine gap penalty',
